@@ -1,0 +1,7 @@
+(ns cli-skeleton\modules\adder-module)
+
+(defn adder
+  "An example of a function."
+  {:export true}
+  [& numbers]
+  (apply + numbers))

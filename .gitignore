@@ -1,0 +1,13 @@
+.idea/
+.vscode/
+data/
+out/
+PhelGenerated/
+var/
+vendor/
+
+!PhelGenerated/.gitkeep
+*.cache
+.phel-repl-history
+gacela*.php
+phel-config-local.php

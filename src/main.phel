@@ -1,0 +1,4 @@
+(ns cli-skeleton\main
+  (:require cli-skeleton\modules\adder-module :refer [adder]))
+
+(println (adder 1 2 3)) # prints 6
