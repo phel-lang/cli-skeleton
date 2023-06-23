@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 use Phel\Config\PhelConfig;
 use Phel\Config\PhelExportConfig;
+use Phel\Config\PhelOutConfig;
 
 return (new PhelConfig())
     ->setSrcDirs(['src'])
     ->setTestDirs(['tests'])
-    ->setOutDir('out')
+    ->setOut(
+        (new PhelOutConfig())
+            ->setDestDir('out')
+            ->setMainPhelNamespace('cli-skeleton\main')
+            ->setMainPhpFilename('index')
+    )
     ->setFormatDirs(['src', 'tests'])
     ->setExport(
         (new PhelExportConfig())
@@ -16,5 +22,5 @@ return (new PhelConfig())
             ->setNamespacePrefix('PhelGenerated')
             ->setTargetDirectory('src/PhelGenerated')
     )
-    ->setIgnoreWhenBuilding(['src/local.phel'])
+    ->setIgnoreWhenBuilding(['local.phel'])
     ->setKeepGeneratedTempFiles(false);
