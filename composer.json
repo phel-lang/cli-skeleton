@@ -21,6 +21,7 @@
     }
   },
   "scripts": {
+    "dev": "vendor/bin/phel run src/main.phel",
     "build": "vendor/bin/phel build --no-cache",
     "format": "vendor/bin/phel format",
     "test": "vendor/bin/phel test"
