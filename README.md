@@ -8,7 +8,7 @@ This repository provides you the basic setup to start coding phel.
 
 ### Requirements
 
-Phel requires at least PHP 8.0 and Composer.
+Phel requires at least PHP 8.2 and Composer.
 You can either use it from your local machine OR using docker.
   - This repository contains the basic Dockerfile to run phel.
 
@@ -29,9 +29,14 @@ You can either use it from your local machine OR using docker.
 ### Phel code
 
 1. Write your phel code in `src/`
-1. Execute your code with `vendor/bin/phel run src/main.phel`
+1. Run your code with `vendor/bin/phel run src/main.phel`
 
-### Tests
+#### Or run the executable transpiled PHP result
+
+1. `vendor/bin/phel build`
+1. `php out/main.php`
+
+#### Tests
 
 1. Write your phel tests in `tests/`
 1. Execute your tests with `./vendor/bin/phel test`

@@ -10,7 +10,7 @@
   "license": "MIT",
   "require": {
     "php": ">=8.2",
-    "phel-lang/phel-lang": "^0.12"
+    "phel-lang/phel-lang": "^0.13"
   },
   "require-dev": {
     "symfony/var-dumper": "^6.4"
