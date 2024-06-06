@@ -1,5 +1,6 @@
 {
   "name": "phel-lang/cli-skeleton",
+  "description": "A minimalistic skeleton to build your cli-app using Phel Lang.",
   "keywords": [
     "phel",
     "lisp",
