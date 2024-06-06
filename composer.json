@@ -27,6 +27,9 @@
     "build": "vendor/bin/phel build --no-cache",
     "format": "vendor/bin/phel format",
     "test": "vendor/bin/phel test",
-    "repl": "vendor/bin/phel repl"
+    "repl": [
+      "Composer\\Config::disableProcessTimeout",
+      "vendor/bin/phel repl"
+    ]
   }
 }
