@@ -1,5 +1,20 @@
-(ns cli-skeleton\main
-  (:require cli-skeleton\modules\adder-module :refer [adder]))
+(ns cli-skeleton.main
+  (:require phel.cli :as cli)
+  (:require cli-skeleton.commands.adder :refer [adder-command])
+  (:require cli-skeleton.commands.greet :refer [greet-command]))
+
+(def app
+  (cli/application
+    {:name     "cli-skeleton"
+     :version  "1.0.0"
+     :default  "greet"
+     :commands [greet-command
+                adder-command]}))
 
 (when-not *build-mode*
-  (println (adder 1 2 3)))
+  (php/exit (cli/run app (cli/argv argv))))
+
+(defn -main
+  "Entry point for the compiled binary (`vendor/bin/phel build`)."
+  [& _args]
+  (cli/run app))

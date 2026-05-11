@@ -1,46 +1,117 @@
-# Phel Cli Skeleton
+# Phel CLI Skeleton
 
-[Phel](https://phel-lang.org/) is a functional programming language that compiles to PHP. 
+[Phel](https://phel-lang.org/) is a functional Lisp that compiles to PHP. This
+repository is a minimal, opinionated starting point for building a real **CLI
+application** with Phel.
 
-This repository provides you the basic setup to start coding phel.
+It ships:
+
+- A data-driven command dispatcher built on top of [`phel\cli`](https://phel-lang.org/)
+  (a thin wrapper over `symfony/console`) with two sample subcommands:
+  `greet` and `add`.
+- An exportable Phel module (`adder-module`) consumed from PHP via the
+  auto-generated `PhelGenerated\CliSkeleton\Modules\AdderModule` class.
+- Tests that exercise both pure logic and the CLI handler boundary using
+  `phel\cli`'s built-in test helpers.
+
+## Requirements
+
+- PHP **>= 8.4** ([phpbrew](https://github.com/phpbrew/phpbrew) on Linux,
+  [shivammathur/homebrew-php](https://github.com/shivammathur/homebrew-php) on macOS)
+- [Composer](https://getcomposer.org/)
+
+> A `build/Dockerfile` and `docker-compose.yml` are included if you'd rather not
+> install PHP locally.
 
 ## Getting started
 
-### Requirements
+```bash
+git clone <this repo>
+cd cli-skeleton
+composer install
+```
 
-Phel requires at least PHP 8.3 and Composer.
-You can either use it from your local machine OR using docker.
-  - This repository contains the basic Dockerfile to run phel.
+### Run the CLI from sources
 
-#### Locally (no Docker)
+```bash
+composer dev                          # invoke default command (greet)
+vendor/bin/phel run cli-skeleton.main greet alice --loud
+vendor/bin/phel run cli-skeleton.main add 1 2 3
+```
 
-1. Ensure you have PHP >=8.3 (Some help about how to install multiple PHP versions locally on [linux](https://github.com/phpbrew/phpbrew) and [Mac](https://github.com/shivammathur/homebrew-php))
-1. Ensure you have [composer](https://getcomposer.org/composer-stable.phar)
-1. Clone this repo
-1. Install the dependencies | `composer install`
+### Compile a standalone PHP binary
 
-#### Using Docker
+```bash
+composer build                        # → out/main.php
+php out/main.php greet alice
+php out/main.php add 1 2 3
+```
 
-1. Clone this repo
-1. Build the image | `docker-compose up -d --build`
-1. Go inside the console | `docker exec -ti -u dev phel_cli_skeleton bash`
-1. Install the dependencies | `composer install`
+### Run the tests
 
-### Phel code
+```bash
+composer test
+```
 
-1. Write your phel code in `src/`
-1. Run your code with `vendor/bin/phel run src/main.phel`
+### Format
 
-#### Or run the executable transpiled PHP result
+```bash
+composer format
+```
 
-1. `vendor/bin/phel build`
-1. `php out/main.php`
+### REPL
 
-#### Tests
+```bash
+composer repl
+```
 
-1. Write your phel tests in `tests/`
-1. Execute your tests with `./vendor/bin/phel test`
+## Project layout
 
-## More about starting with phel
+```
+src/
+├── main.phel                         ; wires the Application + dispatches
+├── commands/
+│   ├── greet.phel                    ; subcommand: greet
+│   └── adder.phel                    ; subcommand: add
+├── modules/
+│   └── adder-module.phel             ; pure logic, exported to PHP
+└── PhelGenerated/                    ; auto-generated PHP wrappers
+tests/
+├── commands/                         ; CLI handler smoke tests
+└── modules/                          ; pure unit tests
+example/
+└── using-exported-phel-function.php  ; call a Phel fn from PHP
+phel-config.php                       ; build / export / format config
+```
 
-Find more information about how to start with phel in [getting started](https://phel-lang.org/documentation/getting-started/).
+### Adding a new command
+
+1. Create `src/commands/<name>.phel` exposing a `def <name>-command` map (see
+   `greet.phel` for the spec — `phel\cli` docs at
+   `vendor/phel-lang/phel-lang/docs/cli-guide.md` cover every option).
+2. Register it in `src/main.phel` by adding it to the `:commands` vector.
+3. Drop a test in `tests/commands/<name>-test.phel` (use `cli/argv` +
+   `cli/buffered-output` to drive the handler in-process).
+
+### Exporting Phel functions to PHP
+
+Mark a function with `{:export true}` (see `src/modules/adder-module.phel`),
+then run:
+
+```bash
+composer export    # regenerates src/PhelGenerated/**
+php example/using-exported-phel-function.php
+```
+
+## Docker
+
+```bash
+docker compose up -d --build
+docker exec -ti -u dev phel_cli_skeleton bash
+composer install
+```
+
+## More
+
+- Phel docs: <https://phel-lang.org/documentation/getting-started/>
+- `phel\cli` guide: `vendor/phel-lang/phel-lang/docs/cli-guide.md`

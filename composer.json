@@ -11,8 +11,9 @@
   "license": "MIT",
   "type": "project",
   "require": {
-    "php": ">=8.3",
-    "phel-lang/phel-lang": ">=0.24"
+    "php": ">=8.4",
+    "phel-lang/phel-lang": "^0.36",
+    "symfony/console": "^7.3"
   },
   "require-dev": {
     "symfony/var-dumper": "^7.3"
@@ -23,8 +24,9 @@
     }
   },
   "scripts": {
-    "dev": "vendor/bin/phel run src/main.phel",
+    "dev": "vendor/bin/phel run cli-skeleton.main",
     "build": "vendor/bin/phel build --no-cache",
+    "export": "vendor/bin/phel export",
     "format": "vendor/bin/phel format",
     "test": "vendor/bin/phel test",
     "repl": [
