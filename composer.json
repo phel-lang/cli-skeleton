@@ -10,9 +10,11 @@
   "homepage": "https://phel-lang.org/",
   "license": "MIT",
   "type": "project",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "require": {
     "php": ">=8.4",
-    "phel-lang/phel-lang": "^0.36",
+    "phel-lang/phel-lang": "dev-main",
     "symfony/console": "^7.3"
   },
   "require-dev": {

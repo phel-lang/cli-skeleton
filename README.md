@@ -39,7 +39,7 @@ vendor/bin/phel run cli-skeleton.main greet alice --loud
 vendor/bin/phel run cli-skeleton.main add 1 2 3
 ```
 
-### Compile a standalone PHP binary
+### Compile a standalone PHP code
 
 ```bash
 composer build                        # → out/main.php
