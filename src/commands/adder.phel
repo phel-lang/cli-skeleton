@@ -3,8 +3,7 @@
   (:require cli-skeleton.modules.adder-module :refer [adder]))
 
 (defn- run-adder [ctx]
-  (let [raw  (cli/arg ctx "numbers")
-        nums (map php/intval raw)]
+  (let [nums (map php/intval (cli/arg ctx "numbers"))]
     (if (empty? nums)
       (do (cli/warning ctx "Pass at least one number, e.g. `add 1 2 3`.")
           1)

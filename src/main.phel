@@ -5,16 +5,14 @@
 
 (def app
   (cli/application
-    {:name     "cli-skeleton"
-     :version  "1.0.0"
-     :default  "greet"
-     :commands [greet-command
-                adder-command]}))
+   {:name     "cli-skeleton"
+    :version  "1.0.0"
+    :default  "greet"
+    :commands [greet-command
+               adder-command]}))
 
 (when-not *build-mode*
   (php/exit (cli/run app (cli/argv argv))))
 
-(defn -main
-  "Entry point for the compiled binary (`vendor/bin/phel build`)."
-  [& _args]
+(defn -main [& _args]
   (cli/run app))
