@@ -14,7 +14,7 @@
   "prefer-stable": true,
   "require": {
     "php": ">=8.4",
-    "phel-lang/phel-lang": "dev-main",
+    "phel-lang/phel-lang": "^0.39",
     "symfony/console": "^7.3"
   },
   "require-dev": {
