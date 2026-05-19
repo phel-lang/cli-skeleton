@@ -43,6 +43,9 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-ansi --no-progress
 
+      - name: Phel doctor
+        run: vendor/bin/phel doctor
+
       - name: Run phel tests
         run: vendor/bin/phel test
 
