@@ -1,0 +1,10 @@
+;; Phel lint config — see `vendor/phel-lang/phel-lang/src/php/Lint/CLAUDE.md`
+;;
+;; Suppresses `phel/unused-binding` on the files affected by upstream
+;; false-positive https://github.com/phel-lang/phel-lang/issues/2018
+;; (let-family forms wrongly flag bindings that are only used in later
+;; bindings of the same vector). Remove the exclude block once #2018 is
+;; fixed and re-released.
+{:exclude {:phel/unused-binding ["*/src/commands/greet.phel"
+                                 "*/tests/commands/greet-test.phel"
+                                 "*/tests/commands/adder-test.phel"]}}
