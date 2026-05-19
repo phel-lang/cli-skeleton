@@ -3,7 +3,7 @@
 
 (defn- run-greet [ctx]
   (let [name  (or (cli/arg ctx "name")
-                 (cli/ask ctx "What's your name?" "world"))
+                  (cli/ask ctx "What's your name?" "world"))
         loud? (cli/opt ctx "loud")
         msg   (str "Hello, " name "!")]
     (cli/success ctx (if loud? (php/strtoupper msg) msg))
