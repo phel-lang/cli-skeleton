@@ -13,6 +13,3 @@
 
 (when-not *build-mode*
   (php/exit (cli/run app (cli/argv argv))))
-
-(defn -main [& _args]
-  (cli/run app))
