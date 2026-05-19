@@ -65,6 +65,15 @@ composer format
 composer repl
 ```
 
+### AI agent skills (optional)
+
+Install editor/agent skill files (Claude, Cursor, Codex, Gemini, Copilot, Aider)
+so your assistant knows Phel idioms and the project structure:
+
+```bash
+vendor/bin/phel agent-install --auto
+```
+
 ## Project layout
 
 ```
