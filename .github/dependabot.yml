@@ -1,0 +1,38 @@
+version: 2
+
+updates:
+  - package-ecosystem: composer
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      phel:
+        patterns:
+          - phel-lang/*
+      symfony:
+        patterns:
+          - symfony/*
+    labels:
+      - dependencies
+      - php
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - ci
+
+  - package-ecosystem: docker
+    directory: /build
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies
+      - docker
