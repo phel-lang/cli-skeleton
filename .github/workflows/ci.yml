@@ -44,9 +44,7 @@ jobs:
         run: composer install --no-interaction --no-ansi --no-progress
 
       - name: Phel doctor
-        run: |
-          mkdir -p "${TMPDIR:-/tmp}/phel/tmp"
-          vendor/bin/phel doctor
+        run: vendor/bin/phel doctor
 
       - name: Phel format check
         run: vendor/bin/phel format --dry-run
