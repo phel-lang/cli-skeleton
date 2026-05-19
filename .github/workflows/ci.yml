@@ -52,7 +52,7 @@ jobs:
         run: vendor/bin/phel format --dry-run
 
       - name: Phel lint
-        run: vendor/bin/phel lint --format=github src tests
+        run: vendor/bin/phel lint --no-cache --format=github src tests
 
       - name: Run phel tests
         run: vendor/bin/phel test
