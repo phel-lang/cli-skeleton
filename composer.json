@@ -30,7 +30,16 @@
     "build": "vendor/bin/phel build --no-cache",
     "export": "vendor/bin/phel export",
     "format": "vendor/bin/phel format",
+    "format-check": "vendor/bin/phel format --dry-run",
+    "lint": "vendor/bin/phel lint src tests",
     "test": "vendor/bin/phel test",
+    "doctor": "vendor/bin/phel doctor",
+    "ci": [
+      "@format-check",
+      "@lint",
+      "@test",
+      "@build"
+    ],
     "repl": [
       "Composer\\Config::disableProcessTimeout",
       "vendor/bin/phel repl"
