@@ -35,7 +35,8 @@ composer install
 
 ```bash
 composer dev                          # invoke default command (greet)
-vendor/bin/phel run cli-skeleton.main greet alice --loud
+composer dev greet alice              # positional args forward as-is
+composer dev -- greet alice --loud    # use -- before option flags (composer convention)
 vendor/bin/phel run cli-skeleton.main add 1 2 3
 ```
 
