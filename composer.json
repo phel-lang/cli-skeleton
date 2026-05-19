@@ -31,7 +31,7 @@
     "export": "vendor/bin/phel export",
     "format": "vendor/bin/phel format",
     "format-check": "vendor/bin/phel format --dry-run",
-    "lint": "vendor/bin/phel lint --no-cache src tests",
+    "lint": "vendor/bin/phel lint src tests",
     "test": "vendor/bin/phel test",
     "doctor": "vendor/bin/phel doctor",
     "ci": [
