@@ -7,23 +7,15 @@ This skeleton enforces one rule that keeps a CLI app testable as it grows:
 ## Two layers
 
 ```
-src/
-├── core/        ; PURE: no IO, no side effects, no randomness, no clock.
-│                ;       Same input -> same output. Unit-test directly.
-└── commands/    ; IO BOUNDARY: read args/opts, prompt, print, exit code.
-                 ;              Stay thin — delegate the real work to core.
-```
-
-Dependency direction is one-way:
-
-```
 commands/  ──requires──▶  core/
-   (IO)                   (pure)
+  (IO)                    (pure)
 ```
 
-`core/` must never `(:require phel.cli ...)` or call `php/exit`, touch the
-filesystem, read the clock, or generate randomness. If you need any of those,
-it belongs in a command (or a dedicated IO namespace — see *Scaling* below).
+- **`core/`** — PURE: no IO, no clock, no randomness. Same input → same output,
+  unit-testable directly. Never `(:require phel.cli ...)`, `php/exit`, the
+  filesystem, or `rand`. If you need those, they belong in a command.
+- **`commands/`** — the IO boundary: read args/opts, prompt, print, return an
+  exit code. Stay thin — delegate the real work to `core/`.
 
 ### Why this matters
 
@@ -49,14 +41,6 @@ function that a test can call with `(build-greeting "alice" true)`.
 
 ## Scaling beyond two layers
 
-For a bigger app, split the boundary in two — this is the `core / glue / io`
-shape used by larger Phel projects:
-
-```
-core/   ; pure logic
-glue/   ; pure wiring: compose core, translate input → intent
-io/     ; the only place with effects: render!, read!, exit
-```
-
-Same rule, finer-grained: `io/ → glue/ → core/`, never reverse. Start with two
-layers; promote to three when commands stop being thin.
+When commands stop being thin, split the boundary into `core/ → glue/ → io/`
+(pure logic → pure wiring → effects) — same one-way rule, finer-grained. This
+is the shape larger Phel projects use; start with two layers and promote later.
