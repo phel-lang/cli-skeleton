@@ -1,0 +1,103 @@
+#!/usr/bin/env sh
+#
+# Scaffold a new CLI command across both layers:
+#   src/core/<name>.phel          pure logic   + tests/core/<name>-test.phel
+#   src/commands/<name>.phel      IO boundary  + tests/commands/<name>-test.phel
+#
+# Usage: bin/new-command <name>      (name is kebab-case, e.g. "say-hi")
+#        make new-command NAME=say-hi
+#
+set -eu
+
+NAME="${1:-}"
+
+if [ -z "$NAME" ]; then
+  echo "error: command name required. Usage: bin/new-command <name>" >&2
+  exit 2
+fi
+
+# Enforce kebab-case so the generated namespaces are valid Phel.
+if ! printf '%s' "$NAME" | grep -Eq '^[a-z][a-z0-9-]*$'; then
+  echo "error: name must be kebab-case (^[a-z][a-z0-9-]*$), got: $NAME" >&2
+  exit 2
+fi
+
+CORE="src/core/$NAME.phel"
+CMD="src/commands/$NAME.phel"
+CORE_TEST="tests/core/$NAME-test.phel"
+CMD_TEST="tests/commands/$NAME-test.phel"
+
+for f in "$CORE" "$CMD" "$CORE_TEST" "$CMD_TEST"; do
+  if [ -e "$f" ]; then
+    echo "error: $f already exists — aborting." >&2
+    exit 1
+  fi
+done
+
+cat > "$CORE" <<EOF
+(ns cli-skeleton.core.$NAME)
+
+;; CORE layer: pure logic only. No IO. See docs/architecture.md.
+
+(defn $NAME
+  "TODO: describe $NAME."
+  [input]
+  input)
+EOF
+
+cat > "$CORE_TEST" <<EOF
+(ns cli-skeleton-tests.core.$NAME-test
+  (:require cli-skeleton.core.$NAME :refer [$NAME])
+  (:require phel.test :refer [deftest is]))
+
+(deftest test-$NAME
+  (is (= "value" ($NAME "value"))))
+EOF
+
+cat > "$CMD" <<EOF
+(ns cli-skeleton.commands.$NAME
+  (:require phel.cli :as cli)
+  (:require cli-skeleton.core.$NAME :refer [$NAME]))
+
+;; COMMAND layer = IO boundary: parse args, print. Logic lives in core.
+
+(defn- run-$NAME [ctx]
+  (let [input (or (cli/arg ctx "input") "world")]
+    (cli/success ctx ($NAME input))
+    0))
+
+(def $NAME-command
+  {:name "$NAME"
+   :doc  "TODO: describe $NAME."
+   :args [{:name "input" :mode :optional :doc "TODO: describe the argument."}]
+   :run  run-$NAME})
+EOF
+
+cat > "$CMD_TEST" <<EOF
+(ns cli-skeleton-tests.commands.$NAME-test
+  (:require phel.cli :as cli)
+  (:require phel.test :refer [deftest is])
+  (:require cli-skeleton.commands.$NAME :refer [$NAME-command]))
+
+(defn- exec [args]
+  (let [app    (cli/application "test" [$NAME-command])
+        input  (cli/argv (cons "$NAME" args))
+        output (cli/buffered-output)
+        code   (cli/run app input output)]
+    {:code code :out (cli/output->string output)}))
+
+(deftest test-$NAME
+  (let [{:keys [code out]} (exec ["world"])]
+    (is (= 0 code))
+    (is (cli/output-contains? out "world"))))
+EOF
+
+echo "created:"
+echo "  $CORE"
+echo "  $CORE_TEST"
+echo "  $CMD"
+echo "  $CMD_TEST"
+echo
+echo "register it in src/main.phel:"
+echo "  1. add to the ns form:  (:require cli-skeleton.commands.$NAME :refer [$NAME-command])"
+echo "  2. add to :commands:     $NAME-command"

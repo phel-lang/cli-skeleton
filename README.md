@@ -125,21 +125,29 @@ example/
 docs/
 ├── architecture.md                   ; the core/commands layering rule
 └── conventions.md                    ; Phel idioms, naming, gotchas
+bin/new-command                       ; scaffold a command across both layers
 phel-config.php                       ; build / export / format config
 .githooks/pre-commit                  ; auto-installed CI gate (composer check)
 ```
 
 ### Adding a new command
 
-1. Put the **pure logic** in `src/core/<name>.phel` and unit-test it directly in
-   `tests/core/<name>-test.phel` (literal data in/out, no harness).
-2. Create the **command** `src/commands/<name>.phel` exposing a `def
-   <name>-command` map (see `greet.phel` for the spec — `phel\cli` docs at
-   `vendor/phel-lang/phel-lang/docs/cli-guide.md` cover every option). Keep it
-   thin: read args/opts, call your `core` fn, print the result.
-3. Register it in `src/main.phel` by adding it to the `:commands` vector.
-4. Drop a handler test in `tests/commands/<name>-test.phel` (use `cli/argv` +
-   `cli/buffered-output` to drive it in-process).
+Scaffold all four files (pure core + IO command + both tests) at once:
+
+```bash
+make new-command NAME=foo     # or: bin/new-command foo
+```
+
+Then finish wiring it:
+
+1. Fill in the pure logic in `src/core/foo.phel` (and its test in
+   `tests/core/foo-test.phel` — literal data in/out, no harness).
+2. Flesh out the **command** `src/commands/foo.phel` — keep it thin: read
+   args/opts, call your `core` fn, print the result. The `phel\cli` spec is
+   documented at `vendor/phel-lang/phel-lang/docs/cli-guide.md`.
+3. **Register it** in `src/main.phel`: add the `:require` and put
+   `foo-command` in the `:commands` vector (the scaffolder prints the exact
+   lines to paste).
 
 See [docs/architecture.md](docs/architecture.md) for why logic and IO are split.
 

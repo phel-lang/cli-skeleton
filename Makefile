@@ -1,4 +1,4 @@
-.PHONY: help install d dev t test f format fc c check w watch fix b build export r repl doctor clean
+.PHONY: help install d dev t test f format fc c check w watch nc new-command fix b build export r repl doctor clean
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
@@ -9,6 +9,10 @@ install: ## composer install
 d: dev
 dev: ## run CLI from sources (pass args: make dev ARGS="greet alice")
 	vendor/bin/phel run cli-skeleton.main $(ARGS)
+
+nc: new-command
+new-command: ## scaffold a new command across both layers (make new-command NAME=foo)
+	@bin/new-command $(NAME)
 
 t: test
 test: ## run phel tests
