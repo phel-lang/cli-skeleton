@@ -13,3 +13,13 @@ composer.lock
 .phel-repl-history
 gacela*.php
 phel-config-local.php
+agnostic-ai.local.yaml
+.agnostic-ai/.sync-state
+.agnostic-ai/packs/
+
+# Per-developer Claude Code settings — never commit.
+.claude/settings.local.json
+# Generated agnostic-ai preamble (boilerplate, no project content) — the real
+# rules live in .claude/rules/, which ARE committed.
+.claude/CLAUDE.md
+AGENTS.md

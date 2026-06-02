@@ -1,0 +1,10 @@
+(ns cli-skeleton.core.greeting)
+
+;; CORE layer: pure logic only. No IO, no side effects, no randomness.
+;; Same input -> same output. Trivially unit-testable without a CLI harness.
+
+(defn build-greeting
+  "Build the greeting string. Pure."
+  [name loud?]
+  (let [msg (str "Hello, " name "!")]
+    (if loud? (php/strtoupper msg) msg)))

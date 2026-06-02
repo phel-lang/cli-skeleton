@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+#
+# Auto-installed by Composer (sets core.hooksPath to .githooks on install).
+# Runs the same fast gate as CI before each commit: format-check, lint, tests.
+# Bypass once with:  git commit --no-verify
+#
+set -e
+
+composer check
+
+# Fail if the generated AI config drifted from the .agnostic-ai/ specs.
+# Skipped automatically when the tool isn't installed (it's optional).
+if command -v agnostic-ai >/dev/null 2>&1; then
+  agnostic-ai sync --check
+fi

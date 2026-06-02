@@ -9,10 +9,13 @@ It ships:
 - A data-driven command dispatcher built on top of [`phel\cli`](https://phel-lang.org/)
   (a thin wrapper over `symfony/console`) with two sample subcommands:
   `greet` and `add`.
-- An exportable Phel module (`adder-module`) consumed from PHP via the
-  auto-generated `PhelGenerated\CliSkeleton\Modules\AdderModule` class.
-- Tests that exercise both pure logic and the CLI handler boundary using
-  `phel\cli`'s built-in test helpers.
+- A **pure `core/` ÷ IO `commands/` layering** that keeps logic testable as the
+  app grows (see [docs/architecture.md](docs/architecture.md)).
+- An exportable pure function (`core/adder.phel`) consumed from PHP via the
+  auto-generated `PhelGenerated\CliSkeleton\Core\Adder` class.
+- Tests that exercise both pure logic (no harness) and the CLI handler boundary
+  using `phel\cli`'s built-in test helpers.
+- A pre-commit hook (auto-installed by Composer) that runs the CI gate locally.
 
 ## Requirements
 
@@ -23,13 +26,21 @@ It ships:
 > A `build/Dockerfile` and `docker-compose.yml` are included if you'd rather not
 > install PHP locally.
 
+> This skeleton tracks Phel's **`dev-main`** branch to showcase the latest
+> idioms. Pin `phel-lang/phel-lang` to a tagged release in `composer.json` for a
+> production app.
+
 ## Getting started
 
 ```bash
 git clone <this repo>
 cd cli-skeleton
-composer install
+composer install      # also installs the .githooks pre-commit gate
+make help             # discover every dev task
 ```
+
+> All dev tasks are available both as `make <target>` (with short aliases like
+> `make t`/`make c`) and `composer <script>`. `make help` lists them.
 
 ### Run the CLI from sources
 
@@ -60,16 +71,35 @@ composer test
 composer format
 ```
 
+### Watch (recompile + reload on save)
+
+```bash
+composer watch        # or: make watch
+```
+
 ### REPL
 
 ```bash
 composer repl
 ```
 
-### AI agent skills (optional)
+### AI agent config (optional)
 
-Install editor/agent skill files (Claude, Cursor, Codex, Gemini, Copilot, Aider)
-so your assistant knows Phel idioms and the project structure:
+Project conventions for AI assistants are authored **once** as agnostic specs
+under `.agnostic-ai/` (see `rules/io-boundaries.md`, `rules/phel.md`) and
+transpiled to each tool's native location with
+[agnostic-ai](https://github.com/chemaclass/agnostic-ai):
+
+```bash
+agnostic-ai sync          # regenerate .claude/, AGENTS.md, … from the specs
+agnostic-ai sync --check  # CI/pre-commit: fail on drift
+```
+
+The emitted files (`.claude/`, `AGENTS.md`) are git-ignored and disposable —
+**edit the specs, not the output.** The pre-commit hook runs `sync --check`
+when the tool is installed.
+
+You can also install Phel's built-in idiom skills for your assistant:
 
 ```bash
 vendor/bin/phel agent-install --auto
@@ -80,32 +110,42 @@ vendor/bin/phel agent-install --auto
 ```
 src/
 ├── main.phel                         ; wires the Application + dispatches
-├── commands/
+├── core/                             ; PURE logic — no IO (see docs/architecture.md)
+│   ├── greeting.phel                 ; (build-greeting name loud?)
+│   └── adder.phel                    ; pure logic, exported to PHP
+├── commands/                         ; IO boundary: parse args, print, exit
 │   ├── greet.phel                    ; subcommand: greet
 │   └── adder.phel                    ; subcommand: add
-├── modules/
-│   └── adder-module.phel             ; pure logic, exported to PHP
 └── PhelGenerated/                    ; auto-generated PHP wrappers
 tests/
-├── commands/                         ; CLI handler smoke tests
-└── modules/                          ; pure unit tests
+├── core/                             ; pure unit tests (no CLI harness)
+└── commands/                         ; CLI handler smoke tests
 example/
 └── using-exported-phel-function.php  ; call a Phel fn from PHP
+docs/
+├── architecture.md                   ; the core/commands layering rule
+└── conventions.md                    ; Phel idioms, naming, gotchas
 phel-config.php                       ; build / export / format config
+.githooks/pre-commit                  ; auto-installed CI gate (composer check)
 ```
 
 ### Adding a new command
 
-1. Create `src/commands/<name>.phel` exposing a `def <name>-command` map (see
-   `greet.phel` for the spec — `phel\cli` docs at
-   `vendor/phel-lang/phel-lang/docs/cli-guide.md` cover every option).
-2. Register it in `src/main.phel` by adding it to the `:commands` vector.
-3. Drop a test in `tests/commands/<name>-test.phel` (use `cli/argv` +
-   `cli/buffered-output` to drive the handler in-process).
+1. Put the **pure logic** in `src/core/<name>.phel` and unit-test it directly in
+   `tests/core/<name>-test.phel` (literal data in/out, no harness).
+2. Create the **command** `src/commands/<name>.phel` exposing a `def
+   <name>-command` map (see `greet.phel` for the spec — `phel\cli` docs at
+   `vendor/phel-lang/phel-lang/docs/cli-guide.md` cover every option). Keep it
+   thin: read args/opts, call your `core` fn, print the result.
+3. Register it in `src/main.phel` by adding it to the `:commands` vector.
+4. Drop a handler test in `tests/commands/<name>-test.phel` (use `cli/argv` +
+   `cli/buffered-output` to drive it in-process).
+
+See [docs/architecture.md](docs/architecture.md) for why logic and IO are split.
 
 ### Exporting Phel functions to PHP
 
-Mark a function with `{:export true}` (see `src/modules/adder-module.phel`),
+Mark a function with `{:export true}` (see `src/core/adder.phel`),
 then run:
 
 ```bash
@@ -123,5 +163,7 @@ composer install
 
 ## More
 
+- [docs/architecture.md](docs/architecture.md) — the core/commands layering rule
+- [docs/conventions.md](docs/conventions.md) — Phel idioms, naming, gotchas
 - Phel docs: <https://phel-lang.org/documentation/getting-started/>
 - `phel\cli` guide: `vendor/phel-lang/phel-lang/docs/cli-guide.md`

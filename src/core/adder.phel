@@ -1,0 +1,10 @@
+(ns cli-skeleton.core.adder)
+
+;; CORE layer: pure logic. Marked `:export true` so PHP can call it via the
+;; auto-generated wrapper in src/PhelGenerated/ (run `composer export`).
+
+(defn adder
+  "Sum every numeric argument. Pure."
+  {:export true}
+  [& numbers]
+  (apply + numbers))

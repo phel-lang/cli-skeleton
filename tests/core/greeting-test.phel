@@ -1,0 +1,9 @@
+(ns cli-skeleton-tests.core.greeting-test
+  (:require cli-skeleton.core.greeting :refer [build-greeting])
+  (:require phel.test :refer [deftest is]))
+
+;; Because the logic is pure, no CLI harness is needed — call it directly.
+
+(deftest test-build-greeting
+  (is (= "Hello, alice!" (build-greeting "alice" false)))
+  (is (= "HELLO, ALICE!" (build-greeting "alice" true))))

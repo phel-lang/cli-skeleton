@@ -1,0 +1,41 @@
+---
+description: What belongs in core/ (pure) vs commands/ (IO boundary)
+globs: src/**,tests/**,*.phel
+---
+
+# IO Boundaries
+
+Dependency direction: `commands/` → `core/`. Never the reverse.
+Full rationale: [docs/architecture.md](../../docs/architecture.md).
+
+## `src/core/`
+
+**Pure logic.** Same input → same output, no observable effect.
+
+- Accepts and returns plain data (maps, vectors, structs).
+- May NOT: print, prompt, read the clock, `rand`, mutate global atoms,
+  `php/exit`, hit the filesystem, sleep.
+- MAY: do math, build new data, throw on invalid input.
+- Test target: deterministic 1:1 unit tests in `tests/core/` — no CLI harness.
+
+## `src/commands/`
+
+**The IO boundary.** The only layer that talks to the outside world.
+
+- Read args/opts via `cli/arg`, `cli/opt`; prompt via `cli/ask`.
+- Print via `cli/success`, `cli/warning`, `cli/error`; return an exit code.
+- Keep handlers thin: parse input → call a `core/` fn → emit the result.
+- Test target: handler smoke tests in `tests/commands/` driving the real
+  dispatcher with `cli/argv` + `cli/buffered-output`.
+
+## Smell test
+
+- A `core/` fn that prints, prompts, reads `php/microtime`, or calls
+  `php/rand` → move the effect into the command, pass the value in instead.
+- A command doing real computation inline → extract it into `core/` and
+  unit-test it there.
+
+## Scaling
+
+When commands stop being thin, split the boundary into `core/ → glue/ → io/`
+(pure logic → pure wiring → effects). Same one-way rule, finer grained.

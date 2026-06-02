@@ -1,8 +1,11 @@
 (ns cli-skeleton.commands.adder
   (:require phel.cli :as cli)
-  (:require cli-skeleton.modules.adder-module :refer [adder]))
+  (:require cli-skeleton.core.adder :refer [adder]))
+
+;; COMMAND layer = IO boundary: parse args, print results. Math lives in core.
 
 (defn- run-adder [ctx]
+  ;; `:coerce` is scalar-only, so map the conversion over the `:array` arg here.
   (let [nums (map php/intval (cli/arg ctx "numbers"))]
     (if (empty? nums)
       (do (cli/warning ctx "Pass at least one number, e.g. `add 1 2 3`.")

@@ -1,12 +1,15 @@
 (ns cli-skeleton.commands.greet
-  (:require phel.cli :as cli))
+  (:require phel.cli :as cli)
+  (:require cli-skeleton.core.greeting :refer [build-greeting]))
+
+;; COMMAND layer = the IO boundary. Read args/opts, ask, print — then delegate
+;; the actual work to the pure `core` layer. Keep this thin.
 
 (defn- run-greet [ctx]
   (let [name  (or (cli/arg ctx "name")
                   (cli/ask ctx "What's your name?" "world"))
-        loud? (cli/opt ctx "loud")
-        msg   (str "Hello, " name "!")]
-    (cli/success ctx (if loud? (php/strtoupper msg) msg))
+        loud? (cli/opt ctx "loud")]
+    (cli/success ctx (build-greeting name loud?))
     0))
 
 (def greet-command

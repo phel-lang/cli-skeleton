@@ -14,7 +14,7 @@
   "prefer-stable": true,
   "require": {
     "php": ">=8.4",
-    "phel-lang/phel-lang": "^0.41",
+    "phel-lang/phel-lang": "dev-main",
     "symfony/console": "^7.3"
   },
   "require-dev": {
@@ -26,6 +26,9 @@
     }
   },
   "scripts": {
+    "post-install-cmd": "@install-hooks",
+    "post-update-cmd": "@install-hooks",
+    "install-hooks": "git config core.hooksPath .githooks",
     "dev": "vendor/bin/phel run cli-skeleton.main",
     "build": "vendor/bin/phel build --no-cache",
     "export": "vendor/bin/phel export",
@@ -33,7 +36,13 @@
     "format-check": "vendor/bin/phel format --dry-run",
     "lint": "vendor/bin/phel lint src tests",
     "test": "vendor/bin/phel test",
+    "watch": "vendor/bin/phel watch src tests",
     "doctor": "vendor/bin/phel doctor",
+    "check": [
+      "@format-check",
+      "@lint",
+      "@test"
+    ],
     "ci": [
       "@format-check",
       "@lint",
