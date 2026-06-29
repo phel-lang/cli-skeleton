@@ -29,7 +29,8 @@ Skip it on private `defn-` unless the behavior is subtle.
 - `defstruct` for data types, not PHP classes.
 - Threading: `->` first-arg, `->>` last-arg.
 - `for` builds sequences, `doseq` does side effects.
-- CLI args via `(cli/argv argv)`, not raw `php/$argv`.
+- CLI args via `(cli/argv *argv*)`, not raw `php/$argv`. `*argv*` is the
+  core global holding user args (excludes the program name).
 - `*build-mode*` guard around top-level side effects in `main.phel` — without
   it `composer build` would execute the app.
 

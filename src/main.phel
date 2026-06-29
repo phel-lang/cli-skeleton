@@ -12,4 +12,4 @@
                adder-command]}))
 
 (when-not *build-mode*
-  (php/exit (cli/run app (cli/argv argv))))
+  (php/exit (cli/run app (cli/argv *argv*))))
