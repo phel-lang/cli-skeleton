@@ -13,8 +13,8 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": ">=8.4",
-    "phel-lang/phel-lang": "^0.52",
+    "php": ">=8.5",
+    "phel-lang/phel-lang": "^0.53",
     "symfony/console": "^8.0"
   },
   "require-dev": {

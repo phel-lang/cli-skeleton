@@ -14,7 +14,7 @@ It ships:
 
 ## Requirements
 
-- PHP **>= 8.4** ([phpbrew](https://github.com/phpbrew/phpbrew) on Linux,
+- PHP **>= 8.5** ([phpbrew](https://github.com/phpbrew/phpbrew) on Linux,
   [shivammathur/homebrew-php](https://github.com/shivammathur/homebrew-php) on macOS)
   and [Composer](https://getcomposer.org/) — or use the bundled
   `build/Dockerfile` + `docker-compose.yml`.
