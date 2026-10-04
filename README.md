@@ -19,8 +19,8 @@ It ships:
   and [Composer](https://getcomposer.org/) — or use the bundled
   `build/Dockerfile` + `docker-compose.yml`.
 
-> Tracks Phel's **`dev-main`** branch to showcase the latest idioms. Pin
-> `phel-lang/phel-lang` to a tagged release for a production app.
+> Requires a tagged Phel release (`phel-lang/phel-lang` `^0.54`). Pin it to an
+> exact version for a production app.
 
 ## Getting started
 
