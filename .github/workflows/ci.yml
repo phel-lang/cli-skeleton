@@ -32,10 +32,9 @@ jobs:
           key: ${{ runner.os }}-php${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
           restore-keys: ${{ runner.os }}-php${{ matrix.php }}-composer-
 
-      # No phel compile cache: this skeleton tracks the moving `dev-main`
-      # branch, and the cache key can't include the resolved phel commit
-      # (composer.lock is git-ignored), so a stale cache from an older phel
-      # build breaks lint/test. Compiling fresh each run is ~1s.
+      # No phel compile cache: composer.lock is git-ignored, so the cache key
+      # can't include the resolved phel version, and a stale cache from an
+      # older phel build breaks lint/test. Compiling fresh each run is ~1s.
 
       - name: Install dependencies
         run: composer install --no-interaction --no-ansi --no-progress
