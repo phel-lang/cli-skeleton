@@ -5,6 +5,6 @@
 
 (defn build-greeting
   "Build the greeting string. Pure."
-  [name loud?]
-  (let [msg (str "Hello, " name "!")]
+  [who loud?]
+  (let [msg (str "Hello, " who "!")]
     (if loud? (php/strtoupper msg) msg)))

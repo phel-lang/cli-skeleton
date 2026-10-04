@@ -6,10 +6,10 @@
 ;; the actual work to the pure `core` layer. Keep this thin.
 
 (defn- run-greet [ctx]
-  (let [name  (or (cli/arg ctx "name")
+  (let [who   (or (cli/arg ctx "name")
                   (cli/ask ctx "What's your name?" "world"))
         loud? (cli/opt ctx "loud")]
-    (cli/success ctx (build-greeting name loud?))
+    (cli/success ctx (build-greeting who loud?))
     0))
 
 (def greet-command
