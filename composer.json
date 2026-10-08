@@ -28,7 +28,7 @@
   "scripts": {
     "post-install-cmd": "@install-hooks",
     "post-update-cmd": "@install-hooks",
-    "install-hooks": "git config core.hooksPath .githooks",
+    "install-hooks": "test -e .git && git config core.hooksPath .githooks || true",
     "dev": "vendor/bin/phel run cli-skeleton.main",
     "build": "vendor/bin/phel build --no-cache",
     "export": "vendor/bin/phel export",
