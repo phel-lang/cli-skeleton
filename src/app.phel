@@ -1,0 +1,12 @@
+(ns cli-skeleton.app
+  (:require phel.cli :as cli)
+  (:require cli-skeleton.commands.adder :refer [adder-command])
+  (:require cli-skeleton.commands.greet :refer [greet-command]))
+
+(def app
+  (cli/application
+   {:name     "cli-skeleton"
+    :version  "1.0.0"
+    :default  "greet"
+    :commands [greet-command
+               adder-command]}))

@@ -55,7 +55,8 @@ php out/main.php add 1 2 3             # run the built binary
 
 ```
 src/
-├── main.phel        ; wires the Application + dispatches
+├── app.phel         ; the Application: registers every command
+├── main.phel        ; dispatches the app (build-mode guarded)
 ├── core/            ; PURE logic — no IO (greeting, adder; adder exported to PHP)
 ├── commands/        ; IO boundary: parse args, print, exit (greet, add)
 └── PhelGenerated/   ; auto-generated PHP wrappers
@@ -75,7 +76,7 @@ phel-config.php      ; build / export / format config
 make new-command NAME=foo     # generates core + command + both tests
 ```
 
-Then fill in the logic and **register it in `src/main.phel`** — add the
+Then fill in the logic and **register it in `src/app.phel`** — add the
 `:require` and put `foo-command` in the `:commands` vector (the scaffolder
 prints the exact lines). Keep commands thin; put real logic in `core/`. See
 [docs/architecture.md](docs/architecture.md).
