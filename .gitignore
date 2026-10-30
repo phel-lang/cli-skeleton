@@ -13,9 +13,6 @@ composer.lock
 .phel-repl-history
 gacela*.php
 phel-config-local.php
-agnostic-ai.local.yaml
-.agnostic-ai/.sync-state
-.agnostic-ai/packs/
 
 # Per-developer Claude Code settings — never commit.
 .claude/settings.local.json
@@ -23,3 +20,13 @@ agnostic-ai.local.yaml
 # rules live in .claude/rules/, which ARE committed.
 .claude/CLAUDE.md
 AGENTS.md
+
+# >>> agnostic-ai (managed) >>>
+# Generated paths. Edit specs, not this block. Run `agnostic-ai sync` to refresh.
+# Not committed: a fresh clone or `git worktree` lacks these until `agnostic-ai sync` runs (e.g. a post-checkout hook).
+/.agnostic-ai/.command-lock
+/.agnostic-ai/.sync-state
+/.agnostic-ai/local/
+/.agnostic-ai/packs/
+/agnostic-ai.local.yaml
+# <<< agnostic-ai (managed) <<<
