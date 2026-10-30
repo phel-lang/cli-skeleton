@@ -21,8 +21,7 @@ outputs:
   claude:
     file: .claude/CLAUDE.md
 
-# Commit the generated agent config (.claude/, AGENTS.md) so anyone cloning the
-# skeleton gets working AI rules without installing agnostic-ai. The tool is
-# only needed to EDIT the specs; `sync --check` (CI + pre-commit) guards drift.
+# Generated agent config (.claude/, AGENTS.md) is git-ignored. After cloning,
+# run `agnostic-ai sync` to produce it; `sync --check` (pre-commit) guards drift.
 gitignore:
-  enabled: false
+  enabled: true
