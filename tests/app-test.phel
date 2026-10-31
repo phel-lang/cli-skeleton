@@ -1,0 +1,20 @@
+(ns cli-skeleton-tests.app-test
+  (:require phel.cli :as cli)
+  (:require phel.test :refer [deftest is])
+  (:require cli-skeleton.app :refer [app]))
+
+(defn- exec [args]
+  (let [output (cli/buffered-output)
+        code   (cli/run app (cli/argv args) output)]
+    {:code code :out (cli/output->string output)}))
+
+(deftest test-app-registers-every-command
+  (let [{:keys [code out]} (exec ["list" "--raw"])]
+    (is (= 0 code))
+    (is (cli/output-contains? out "greet"))
+    (is (cli/output-contains? out "add"))))
+
+(deftest test-app-runs-add-end-to-end
+  (let [{:keys [code out]} (exec ["add" "1" "2"])]
+    (is (= 0 code))
+    (is (cli/output-contains? out "Sum = 3"))))

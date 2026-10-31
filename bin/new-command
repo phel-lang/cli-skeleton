@@ -98,6 +98,6 @@ echo "  $CORE_TEST"
 echo "  $CMD"
 echo "  $CMD_TEST"
 echo
-echo "register it in src/main.phel:"
+echo "register it in src/app.phel:"
 echo "  1. add to the ns form:  (:require cli-skeleton.commands.$NAME :refer [$NAME-command])"
 echo "  2. add to :commands:     $NAME-command"
