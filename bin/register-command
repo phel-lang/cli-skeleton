@@ -1,0 +1,55 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Register a scaffolded command in the application file.
+ *
+ * Usage: bin/register-command <app-file> <name>
+ *
+ * Adds the `:require` and the `:commands` entry. The edit is computed in full
+ * before anything is written, so an unexpected file shape changes nothing.
+ * Exit 0 on success, 1 when the file could not be edited.
+ */
+
+const REQUIRE_LINE = '/^  \(:require cli-skeleton\.commands\.\S+ :refer \[[^\]]+\]\)\)$/m';
+const LAST_COMMAND = '/(\n\s+)([\w?!*-]+)\]\}\)\)/';
+
+function register(string $source, string $name): ?string
+{
+    $symbol = $name . '-command';
+
+    if (preg_match('/(?<![\w-])' . preg_quote($symbol, '/') . '(?![\w-])/', $source) === 1) {
+        return null;
+    }
+
+    if (preg_match_all(REQUIRE_LINE, $source, $matches, PREG_OFFSET_CAPTURE) < 1) {
+        return null;
+    }
+
+    [$lastRequire, $offset] = end($matches[0]);
+    $newRequire = sprintf('  (:require cli-skeleton.commands.%s :refer [%s])', $name, $symbol);
+    $withRequire = substr($source, 0, $offset)
+        . substr($lastRequire, 0, -1) . "\n" . $newRequire . ')'
+        . substr($source, $offset + strlen($lastRequire));
+
+    $count = 0;
+    $registered = preg_replace(LAST_COMMAND, '$1$2$1' . $symbol . ']}))', $withRequire, 1, $count);
+
+    return $count === 1 ? $registered : null;
+}
+
+if ($argc !== 3) {
+    fwrite(STDERR, "usage: bin/register-command <app-file> <name>\n");
+    exit(2);
+}
+
+[, $file, $name] = $argv;
+
+$source = is_readable($file) ? file_get_contents($file) : false;
+$updated = $source === false ? null : register($source, $name);
+
+if ($updated === null || @file_put_contents($file, $updated) === false) {
+    exit(1);
+}
