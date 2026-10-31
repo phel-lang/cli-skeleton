@@ -102,7 +102,7 @@ transpiled per tool with [agnostic-ai](https://github.com/chemaclass/agnostic-ai
 
 ```bash
 docker compose up -d --build
-docker exec -ti -u dev phel_cli_skeleton bash
+docker exec -ti phel_cli_skeleton bash
 composer install
 ```
 
