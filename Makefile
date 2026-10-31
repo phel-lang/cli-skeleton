@@ -1,4 +1,4 @@
-.PHONY: help install d dev t test f format fc c check ci w watch nc new-command b build export r repl doctor clean
+.PHONY: help install d dev t test f format fc c check ci mu mutate w watch nc new-command b build export r repl doctor clean
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
@@ -29,8 +29,12 @@ c: check
 check: ## fast pre-commit gate: format-check + lint + test
 	composer check
 
-ci: ## full CI gate: format-check + lint + test + build
+ci: ## full CI gate: format-check + lint + test + mutate + build + export
 	composer ci
+
+mu: mutate
+mutate: ## mutation-test the pure core (fails below 90% MSI)
+	composer mutate
 
 b: build
 build: ## build standalone PHP binary -> out/main.php
