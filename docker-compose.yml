@@ -5,5 +5,6 @@ services:
       dockerfile: build/Dockerfile
     container_name: phel_cli_skeleton
     hostname: php
+    command: sleep infinity
     volumes:
       - .:/srv/phel-cli-skeleton:delegated
