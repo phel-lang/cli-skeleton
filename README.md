@@ -93,9 +93,9 @@ php example/using-exported-phel-function.php
 
 Conventions are authored once as agnostic specs under `.agnostic-ai/rules/` and
 transpiled per tool with [agnostic-ai](https://github.com/chemaclass/agnostic-ai)
-(`agnostic-ai sync`). The emitted `.claude/`, `AGENTS.md` are git-ignored — edit
-the specs, not the output. `vendor/bin/phel agent-install --auto` adds Phel's
-built-in idiom skills.
+(`agnostic-ai sync`). The emitted `.claude/`, `AGENTS.md` are git-ignored: run
+`agnostic-ai sync` after cloning, and edit the specs, not the output.
+`vendor/bin/phel agent-install --auto` adds Phel's built-in idiom skills.
 
 ## Docker
 
