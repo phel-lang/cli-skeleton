@@ -29,7 +29,7 @@ Skip it on private `defn-` unless the behavior is subtle.
 - `for` builds sequences, `doseq` does side effects.
 - CLI args via `(cli/argv *argv*)`, not raw `php/$argv`. `*argv*` is the
   core global holding user args (excludes the program name).
-- `*build-mode*` guard around top-level side effects in `main.phel` — without
+- `*build-mode*` guard around top-level side effects in `main.phel`. Without
   it `composer build` would execute the app.
 
 ## Exporting to PHP

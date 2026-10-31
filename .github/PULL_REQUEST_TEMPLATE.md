@@ -1,7 +1,15 @@
-## 📚 Description
+## Description
 
-Replace this text with a short description of your feature/bugfix. 
+What does this change, and why?
 
-## 🔖 Changes
+## Changes
 
-- List individual changes in more detail
+- 
+
+## Verification
+
+How did you check it? Name the command and the result for each acceptance criterion.
+
+- [ ] `composer ci` passes
+
+Closes #
