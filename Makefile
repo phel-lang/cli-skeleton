@@ -1,4 +1,4 @@
-.PHONY: help install d dev t test f format fc c check w watch nc new-command fix b build export r repl doctor clean
+.PHONY: help install d dev t test f format fc c check ci w watch nc new-command b build export r repl doctor clean
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
@@ -8,7 +8,7 @@ install: ## composer install
 
 d: dev
 dev: ## run CLI from sources (pass args: make dev ARGS="greet alice")
-	vendor/bin/phel run cli-skeleton.main $(ARGS)
+	composer dev -- $(ARGS)
 
 nc: new-command
 new-command: ## scaffold a new command across both layers (make new-command NAME=foo)
@@ -16,36 +16,39 @@ new-command: ## scaffold a new command across both layers (make new-command NAME
 
 t: test
 test: ## run phel tests
-	vendor/bin/phel test
+	composer test
 
 f: format
 format: ## auto-format sources
-	vendor/bin/phel format
+	composer format
 
 fc: ## format check only (CI-style, exits non-zero on drift)
-	vendor/bin/phel format --dry-run
+	composer format-check
 
 c: check
 check: ## fast pre-commit gate: format-check + lint + test
 	composer check
 
+ci: ## full CI gate: format-check + lint + test + build
+	composer ci
+
 b: build
 build: ## build standalone PHP binary -> out/main.php
-	vendor/bin/phel build
+	composer build
 
 export: ## regenerate PHP wrappers in src/PhelGenerated/
-	vendor/bin/phel export
+	composer export
 
 w: watch
 watch: ## recompile + reload changed namespaces on save
-	vendor/bin/phel watch src tests
+	composer watch
 
 r: repl
 repl: ## start phel REPL
-	vendor/bin/phel repl
+	composer repl
 
 doctor: ## verify environment + module health
-	vendor/bin/phel doctor
+	composer doctor
 
 clean: ## drop build artifacts and caches
 	rm -rf out .phel/cache

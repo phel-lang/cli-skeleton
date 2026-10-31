@@ -40,16 +40,16 @@ jobs:
         run: composer install --no-interaction --no-ansi --no-progress
 
       - name: Phel doctor
-        run: vendor/bin/phel doctor
+        run: composer doctor
 
       - name: Phel format check
-        run: vendor/bin/phel format --dry-run
+        run: composer format-check
 
       - name: Phel lint
-        run: vendor/bin/phel lint --format=github src tests
+        run: composer lint -- --format=github
 
       - name: Run phel tests
-        run: vendor/bin/phel test
+        run: composer test
 
       - name: Build standalone binary
-        run: vendor/bin/phel build
+        run: composer build
