@@ -49,6 +49,7 @@ Every task is both a `make <target>` (with short aliases) and a
 composer dev greet alice              # positional args forward as-is
 composer dev -- greet alice --loud    # put -- before flags (composer convention)
 php out/main.php add 1 2 3             # run the built binary
+php out/main.php add -- -1 2          # -- before negative numbers
 ```
 
 ## Project layout
