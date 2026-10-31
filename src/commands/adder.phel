@@ -1,28 +1,22 @@
 (ns cli-skeleton.commands.adder
   (:require phel.cli :as cli)
-  (:require cli-skeleton.core.adder :refer [adder parse-int]))
+  (:require cli-skeleton.core.adder :refer [sum-tokens]))
 
 ;; COMMAND layer = IO boundary: parse args, print results. Math lives in core.
 
 (defn- run-adder [ctx]
-  (let [tokens  (cli/arg ctx "numbers")
-        invalid (filter (fn [token] (nil? (parse-int token))) tokens)]
-    (cond
-      (empty? tokens)
+  (let [tokens (cli/arg ctx "numbers")]
+    (if (empty? tokens)
       (do (cli/warning ctx "Pass at least one number, e.g. `add 1 2 3`.")
           1)
-
-      (seq invalid)
-      (do (cli/error ctx (str "Not an integer: " (php/implode ", " (to-php-array invalid))))
-          1)
-
-      :else
-      (let [total (apply adder (map parse-int tokens))]
-        (if (php/is_int total)
-          (do (cli/success ctx (str "Sum = " total))
-              0)
-          (do (cli/error ctx "Sum is too large for an integer.")
-              1))))))
+      (let [{:keys [total invalid overflow]} (sum-tokens tokens)]
+        (cond
+          invalid  (do (cli/error ctx (str "Not an integer: " (php/implode ", " (to-php-array invalid))))
+                       1)
+          overflow (do (cli/error ctx "Sum is too large for an integer.")
+                       1)
+          :else    (do (cli/success ctx (str "Sum = " total))
+                       0))))))
 
 (def adder-command
   {:name "add"

@@ -1,5 +1,5 @@
 (ns cli-skeleton-tests.core.adder-test
-  (:require cli-skeleton.core.adder :refer [adder parse-int])
+  (:require cli-skeleton.core.adder :refer [adder parse-int sum-tokens])
   (:require phel.test :refer [deftest is]))
 
 ;; CORE tests: pure logic, literal data in/out. No CLI harness, no mocks.
@@ -17,3 +17,9 @@
   (is (nil? (parse-int "1.5")))
   (is (nil? (parse-int "")))
   (is (nil? (parse-int "9223372036854775808"))))
+
+(deftest test-sum-tokens
+  (is (= {:total 6} (sum-tokens ["1" "2" "3"])))
+  (is (= {:total 1} (sum-tokens ["-1" "2"])))
+  (is (= {:invalid ["abc" "1.5"]} (sum-tokens ["1" "abc" "2" "1.5"])))
+  (is (= {:overflow true} (sum-tokens ["9223372036854775807" "1"]))))
