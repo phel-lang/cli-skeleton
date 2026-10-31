@@ -19,3 +19,19 @@
   (let [{:keys [code out]} (exec [])]
     (is (= 1 code))
     (is (cli/output-contains? out "at least one"))))
+
+(deftest test-add-rejects-non-integers
+  (let [{:keys [code out]} (exec ["1" "abc" "2"])]
+    (is (= 1 code))
+    (is (cli/output-contains? out "abc")))
+  (is (= 1 (:code (exec ["1.5" "2"])))))
+
+(deftest test-add-rejects-overflowing-sum
+  (let [{:keys [code out]} (exec ["9223372036854775807" "1"])]
+    (is (= 1 code))
+    (is (cli/output-contains? out "too large"))))
+
+(deftest test-add-negative-after-double-dash
+  (let [{:keys [code out]} (exec ["--" "-1" "2"])]
+    (is (= 0 code))
+    (is (cli/output-contains? out "Sum = 1"))))

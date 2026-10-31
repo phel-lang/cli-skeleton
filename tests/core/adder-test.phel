@@ -1,5 +1,5 @@
 (ns cli-skeleton-tests.core.adder-test
-  (:require cli-skeleton.core.adder :refer [adder])
+  (:require cli-skeleton.core.adder :refer [adder parse-int])
   (:require phel.test :refer [deftest is]))
 
 ;; CORE tests: pure logic, literal data in/out. No CLI harness, no mocks.
@@ -8,3 +8,12 @@
   (is (= 0 (adder)))
   (is (= 6 (adder 1 2 3)))
   (is (= -1 (adder 2 -3))))
+
+(deftest test-parse-int
+  (is (= 7 (parse-int "7")))
+  (is (= 0 (parse-int "0")))
+  (is (= -3 (parse-int "-3")))
+  (is (nil? (parse-int "abc")))
+  (is (nil? (parse-int "1.5")))
+  (is (nil? (parse-int "")))
+  (is (nil? (parse-int "9223372036854775808"))))

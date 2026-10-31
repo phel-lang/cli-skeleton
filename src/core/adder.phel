@@ -8,3 +8,9 @@
   {:export true}
   [& numbers]
   (apply + numbers))
+
+(defn parse-int
+  "Parse a string as a strict integer. Returns nil for anything else:
+  floats, text, empty input, or a value outside the PHP integer range. Pure."
+  [s]
+  (php/filter_var s php/FILTER_VALIDATE_INT php/FILTER_NULL_ON_FAILURE))
