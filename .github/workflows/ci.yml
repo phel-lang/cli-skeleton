@@ -53,3 +53,14 @@ jobs:
 
       - name: Build standalone binary
         run: composer build
+
+      - name: Smoke test built binary
+        run: |
+          php out/main.php --version
+          php out/main.php add 1 2 3 | grep -q "Sum = 6"
+          php out/main.php greet ci --loud | grep -q "HELLO, CI!"
+
+      - name: Export and run the PHP example
+        run: |
+          composer export
+          php example/using-exported-phel-function.php | grep -q "Result = 6"
