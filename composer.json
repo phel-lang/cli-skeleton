@@ -47,7 +47,8 @@
       "@format-check",
       "@lint",
       "@test",
-      "@build"
+      "@build",
+      "@export"
     ],
     "repl": [
       "Composer\\Config::disableProcessTimeout",
