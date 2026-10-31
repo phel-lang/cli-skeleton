@@ -107,11 +107,11 @@ echo
 # anything is written; on an unexpected file shape nothing changes.
 APP="src/app.phel"
 # shellcheck disable=SC2016  # the PHP program is single-quoted on purpose
-if php -r '
+if php -d display_errors=stderr -r '
 $file = $argv[1];
 $name = $argv[2];
 $src = file_get_contents($file);
-if ($src === false || str_contains($src, "$name-command")) { exit(1); }
+if ($src === false || preg_match("/(?<![\\w-])$name-command(?![\\w-])/", $src)) { exit(1); }
 $pattern = "/^  \\(:require cli-skeleton\\.commands\\.\\S+ :refer \\[[^\\]]+\\]\\)\\)$/m";
 if (!preg_match_all($pattern, $src, $m, PREG_OFFSET_CAPTURE) || !$m[0]) { exit(1); }
 [$last, $offset] = end($m[0]);
@@ -120,7 +120,7 @@ $src = substr($src, 0, $offset) . substr($last, 0, -1) . "\n" . $new . ")" . sub
 $count = 0;
 $src = preg_replace("/(\\n\\s+)([\\w?!*-]+)\\]\\}\\)\\)/", "\$1\$2\$1$name-command]}))", $src, 1, $count);
 if ($count !== 1) { exit(1); }
-file_put_contents($file, $src);
+if (file_put_contents($file, $src) === false) { exit(1); }
 ' "$APP" "$NAME" 2>/dev/null; then
   [ -x vendor/bin/phel ] && vendor/bin/phel format "$APP" >/dev/null 2>&1 || true
   echo "registered $NAME-command in $APP"
