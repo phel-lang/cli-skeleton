@@ -1,103 +1,95 @@
 # Phel CLI Skeleton
 
-[Phel](https://phel-lang.org/) is a functional Lisp that compiles to PHP. This
-is a minimal, opinionated starting point for a real **CLI application** with Phel.
+A starting point for a command-line app in [Phel](https://phel-lang.org/), a functional Lisp that compiles to PHP. It ships two sample commands, `greet` and `add`, with tests, a command scaffolder, and a pre-commit gate.
 
-It ships:
+## What you get
 
-- A data-driven dispatcher on [`phel\cli`](https://phel-lang.org/) (a
-  `symfony/console` wrapper) with sample `greet` + `add` subcommands.
-- A pure **`core/` ÷ IO `commands/`** layering that stays testable as it grows
-  ([docs/architecture.md](docs/architecture.md)).
-- A pure function exported to PHP via an auto-generated wrapper.
-- Fast inner loop: pre-commit gate, command scaffolder, and watch mode.
+- A command dispatcher built on `phel\cli`, which wraps `symfony/console`.
+- Two layers: `core/` holds pure logic, `commands/` handles input and output. See [docs/architecture.md](docs/architecture.md).
+- Unit tests for the core, smoke tests for every command, and mutation testing for the core.
+- `bin/new-command` creates a command with its tests and registers it.
+- A pure function exported to PHP through a generated wrapper.
+- CI that builds the standalone binary and runs it.
 
 ## Requirements
 
-- PHP **>= 8.5** ([phpbrew](https://github.com/phpbrew/phpbrew) on Linux,
-  [shivammathur/homebrew-php](https://github.com/shivammathur/homebrew-php) on macOS)
-  and [Composer](https://getcomposer.org/) — or use the bundled
-  `build/Dockerfile` + `docker-compose.yml`.
+- PHP 8.5 or newer, and [Composer](https://getcomposer.org/).
+- Or Docker: the repo includes a `Dockerfile` and a compose file (see [Docker](#docker)).
 
-> Requires a tagged Phel release (`phel-lang/phel-lang` `^0.54`). Pin it to an
-> exact version for a production app.
+The skeleton requires phel-lang `^0.54`. Pin an exact version before you ship an app.
 
-## Getting started
+## Quick start
 
 ```bash
-composer install      # also installs the .githooks pre-commit gate
-make help             # list every dev task
+composer install       # also installs the pre-commit hook
+composer dev greet alice
+composer check         # format check, lint, tests
 ```
 
-## Commands
+`make help` lists every task.
 
-Every task is both a `make <target>` (with short aliases) and a
-`composer <script>`:
+## Tasks
 
-| Task                        | Command                       |
-| --------------------------- | ----------------------------- |
-| Run from sources            | `composer dev [args]`         |
-| Build standalone PHP        | `composer build` → `out/main.php` |
-| Run tests                   | `composer test`               |
-| Format                      | `composer format`             |
-| Watch (reload on save)      | `composer watch`              |
-| REPL                        | `composer repl`               |
-| Local gate (format+lint+test) | `composer check`            |
-| Mutation-test `core/`       | `composer mutate`             |
-| Scaffold a command          | `make new-command NAME=foo`   |
+Each task is a composer script. The `Makefile` calls the same scripts and adds short aliases.
+
+| Task | Command | Alias |
+| --- | --- | --- |
+| Run from sources | `composer dev greet alice` | `make d ARGS="greet alice"` |
+| Run tests | `composer test` | `make t` |
+| Format files | `composer format` | `make f` |
+| Fast gate: format check, lint, tests | `composer check` | `make c` |
+| Mutation-test `core/` | `composer mutate` | `make mu` |
+| Full CI gate | `composer ci` | `make ci` |
+| Build the standalone binary at `out/main.php` | `composer build` | `make b` |
+| Regenerate the PHP wrappers | `composer export` | `make export` |
+| Recompile on save | `composer watch` | `make w` |
+| Open a REPL | `composer repl` | `make r` |
+| Create a command | `make new-command NAME=foo` | `make nc NAME=foo` |
+
+Composer reads flags itself, so put `--` before flags meant for the app:
 
 ```bash
-composer dev greet alice              # positional args forward as-is
-composer dev -- greet alice --loud    # put -- before flags (composer convention)
-php out/main.php add 1 2 3             # run the built binary
-php out/main.php add -- -1 2          # -- before negative numbers
+composer dev -- greet alice --loud
+php out/main.php add 1 2 3
+php out/main.php add -- -1 2     # -- is also needed for negative numbers
 ```
 
-## Project layout
+## Layout
 
 ```
 src/
-├── app.phel         ; the Application: registers every command
-├── main.phel        ; dispatches the app (build-mode guarded)
-├── core/            ; PURE logic — no IO (greeting, adder; adder exported to PHP)
-├── commands/        ; IO boundary: parse args, print, exit (greet, add)
-└── PhelGenerated/   ; auto-generated PHP wrappers
+  app.phel          registers every command
+  main.phel         runs the app (skipped during build)
+  core/             pure logic: greeting, adder
+  commands/         input and output: greet, add
+  PhelGenerated/    generated PHP wrappers (git-ignored)
 tests/
-├── core/            ; pure unit tests (no CLI harness)
-└── commands/        ; CLI handler smoke tests
-docs/                ; architecture.md (layering), conventions.md (idioms)
-bin/new-command      ; scaffold a command across both layers
-example/             ; call an exported Phel fn from PHP
-phel-config.php      ; build / export / format config
-.githooks/pre-commit ; auto-installed gate (composer check)
+  core/             unit tests, no CLI harness
+  commands/         one smoke test per command
+  app-test.phel     runs the real app
+bin/new-command     command scaffolder
+docs/               architecture and conventions
+example/            calls an exported Phel function from PHP
 ```
 
-## Adding a command
+## Add a command
 
 ```bash
-make new-command NAME=foo     # generates core + command + both tests, registers it
+make new-command NAME=say-hi
 ```
 
-Then fill in the logic. The scaffolder also registers the command in
-`src/app.phel`. Keep commands thin; put real logic in `core/`. See
-[docs/architecture.md](docs/architecture.md).
+This creates `src/core/say-hi.phel`, `src/commands/say-hi.phel`, and a test for each. It also adds the command to `src/app.phel`. If that file has been reshaped so the edit is unsafe, the script prints the two lines to add by hand.
 
-## Exporting Phel to PHP
+Put the logic in `core/` and keep the command to reading arguments, calling core, and printing. [docs/architecture.md](docs/architecture.md) explains why.
 
-Mark a `core/` function `{:export true}` (see `src/core/adder.phel`), then:
+## Export to PHP
+
+Mark a `core/` function with `{:export true}` (see `src/core/adder.phel`), then:
 
 ```bash
-composer export    # regenerates src/PhelGenerated/**
+composer export
 php example/using-exported-phel-function.php
 ```
-
-## AI agent config (optional)
-
-Conventions are authored once as agnostic specs under `.agnostic-ai/rules/` and
-transpiled per tool with [agnostic-ai](https://github.com/chemaclass/agnostic-ai)
-(`agnostic-ai sync`). The emitted `.claude/`, `AGENTS.md` are git-ignored: run
-`agnostic-ai sync` after cloning, and edit the specs, not the output.
-`vendor/bin/phel agent-install --auto` adds Phel's built-in idiom skills.
 
 ## Docker
 
@@ -107,9 +99,18 @@ docker exec -ti phel_cli_skeleton bash
 composer install
 ```
 
+The container runs as a non-root user.
+
+## AI tool config
+
+The rules for AI coding tools live as specs in `.agnostic-ai/` and are turned into each tool's own files by [agnostic-ai](https://github.com/chemaclass/agnostic-ai). The generated files are git-ignored. After cloning, run `agnostic-ai sync` to create them, and edit the specs, never the output. Install the CLI first, from [its docs](https://agnostic-ai.org/docs/installation/).
+
+`vendor/bin/phel agent-install --auto` adds Phel's own idiom skills.
+
 ## More
 
-- [docs/architecture.md](docs/architecture.md) — the core/commands layering rule
-- [docs/conventions.md](docs/conventions.md) — Phel idioms, naming, gotchas
-- Phel docs: <https://phel-lang.org/documentation/getting-started/>
-- `phel\cli` guide: `vendor/phel-lang/phel-lang/docs/cli-guide.md`
+- [CONTRIBUTING.md](CONTRIBUTING.md): setup, the gate, commit and PR conventions
+- [docs/architecture.md](docs/architecture.md): the `core/` and `commands/` rule
+- [docs/conventions.md](docs/conventions.md): naming, idioms, and gotchas
+- [Phel documentation](https://phel-lang.org/documentation/getting-started/)
+- `vendor/phel-lang/phel-lang/docs/cli-reference.md`: every `phel` command

@@ -1,46 +1,41 @@
 # Architecture
 
-This skeleton enforces one rule that keeps a CLI app testable as it grows:
-
-> **Pure logic never knows about IO. IO depends on pure logic, never the reverse.**
-
-## Two layers
+One rule keeps a CLI app testable as it grows: pure logic never knows about input or output. Output code depends on pure logic, never the other way round.
 
 ```
-commands/  ──requires──▶  core/
-  (IO)                    (pure)
+commands/  requires  core/
+  (IO)                (pure)
 ```
 
-- **`core/`** — PURE: no IO, no clock, no randomness. Same input → same output,
-  unit-testable directly. Never `(:require phel.cli ...)`, `php/exit`, the
-  filesystem, or `rand`. If you need those, they belong in a command.
-- **`commands/`** — the IO boundary: read args/opts, prompt, print, return an
-  exit code. Stay thin — delegate the real work to `core/`.
+- **`core/`** is pure. The same input gives the same output, with no printing, prompting, clock, randomness, filesystem, or `php/exit`. It never requires `phel.cli`. Anything that needs those belongs in a command.
+- **`commands/`** is the boundary. It reads arguments and options, prompts, prints, and returns an exit code. It delegates the real work to `core/`.
+- **`app.phel`** lists the commands. **`main.phel`** runs the app, and skips that during a build so `composer build` does not start the CLI.
 
-### Why this matters
+## Why
 
-- **Testability.** `core/` is tested with literal data in / literal data out,
-  no CLI harness, no mocks (`tests/core/*`). Commands get a thin smoke test
-  through the real dispatcher (`tests/commands/*`).
-- **Reuse.** Pure functions are the ones worth exporting to PHP
-  (`{:export true}`), reusing across commands, or moving to another project.
-- **Reasoning.** A bug is either in pure logic (deterministic, easy to repro)
-  or in wiring (visible at the boundary). Rarely both.
+- **Testing.** Core tests pass literal data in and compare literal data out. No harness, no mocks. Commands get a smoke test through the real dispatcher.
+- **Reuse.** Pure functions are the ones worth exporting to PHP with `{:export true}`, or moving to another project.
+- **Debugging.** A bug is either in the logic, which is deterministic and easy to reproduce, or in the wiring, which shows at the boundary.
 
-## Worked example
+## Example: `add`
 
-`greet` splits cleanly:
+| Layer | Responsibility |
+| --- | --- |
+| `core/adder.phel` | `parse-int` reads one token. `sum-tokens` returns the total, the invalid tokens, or an overflow flag. |
+| `commands/adder.phel` | Reads the `numbers` argument, calls `sum-tokens`, prints the result or the error, returns 0 or 1. |
 
-| Layer                       | Responsibility                              |
-| --------------------------- | ------------------------------------------- |
-| `core/greeting.phel`        | `(build-greeting name loud?)` → string      |
-| `commands/greet.phel`       | read `name`/`--loud`, ask if missing, print |
+The command makes no decision about what counts as a valid number or an overflow. `tests/core/adder-test.phel` covers those cases with plain data, and mutation testing (`composer mutate`) checks that those tests catch changes to the logic.
 
-The command reads input and prints; the string itself is built by a pure
-function that a test can call with `(build-greeting "alice" true)`.
+## Testing each layer
 
-## Scaling beyond two layers
+| Layer | Test | How |
+| --- | --- | --- |
+| `core/` | `tests/core/*-test.phel` | Call the function with data. |
+| `commands/` | `tests/commands/*-test.phel` | Run one command through `cli/run` with `cli/buffered-output`. |
+| `app.phel` | `tests/app-test.phel` | Run the real app and check every command is listed. |
 
-When commands stop being thin, split the boundary into `core/ → glue/ → io/`
-(pure logic → pure wiring → effects) — same one-way rule, finer-grained. This
-is the shape larger Phel projects use; start with two layers and promote later.
+Tests require `cli-skeleton.app`, never `cli-skeleton.main`. Loading `main` runs the CLI and calls `php/exit`, which ends the test process.
+
+## When two layers are not enough
+
+When commands stop being thin, split the boundary into `core/`, `glue/`, and `io/`: pure logic, pure wiring, and effects. The dependency still points one way. Start with two layers and split when a command grows past reading input and printing.

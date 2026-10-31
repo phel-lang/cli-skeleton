@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for filing! For bugs in **phel-lang itself** (compiler, runtime,
+        For bugs in **phel-lang itself** (compiler, runtime,
         CLI commands like `phel lint` / `phel doctor`), please file at
         https://github.com/phel-lang/phel-lang/issues instead. This tracker
         is for the cli-skeleton template.
@@ -14,7 +14,7 @@ body:
     attributes:
       label: Phel version
       description: Output of `vendor/bin/phel --version`
-      placeholder: v0.39.0
+      placeholder: v0.54.0
     validations:
       required: true
   - type: input
