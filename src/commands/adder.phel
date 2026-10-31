@@ -1,5 +1,6 @@
 (ns cli-skeleton.commands.adder
   (:require phel.cli :as cli)
+  (:require phel.string :as str)
   (:require cli-skeleton.core.adder :refer [sum-tokens]))
 
 ;; COMMAND layer = IO boundary: parse args, print results. Math lives in core.
@@ -11,7 +12,7 @@
           1)
       (let [{:keys [total invalid overflow]} (sum-tokens tokens)]
         (cond
-          invalid  (do (cli/error ctx (str "Not an integer: " (php/implode ", " (to-php-array invalid))))
+          invalid  (do (cli/error ctx (str "Not an integer: " (str/join ", " invalid)))
                        1)
           overflow (do (cli/error ctx "Sum is too large for an integer.")
                        1)

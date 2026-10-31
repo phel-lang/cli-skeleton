@@ -43,6 +43,7 @@ Every task is both a `make <target>` (with short aliases) and a
 | Watch (reload on save)      | `composer watch`              |
 | REPL                        | `composer repl`               |
 | Local gate (format+lint+test) | `composer check`            |
+| Mutation-test `core/`       | `composer mutate`             |
 | Scaffold a command          | `make new-command NAME=foo`   |
 
 ```bash

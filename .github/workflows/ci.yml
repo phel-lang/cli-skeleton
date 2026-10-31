@@ -61,6 +61,9 @@ jobs:
       - name: Run phel tests
         run: composer test
 
+      - name: Mutation tests
+        run: composer mutate
+
       - name: Build standalone binary
         run: composer build
 
