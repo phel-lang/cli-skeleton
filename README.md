@@ -74,12 +74,11 @@ phel-config.php      ; build / export / format config
 ## Adding a command
 
 ```bash
-make new-command NAME=foo     # generates core + command + both tests
+make new-command NAME=foo     # generates core + command + both tests, registers it
 ```
 
-Then fill in the logic and **register it in `src/app.phel`** — add the
-`:require` and put `foo-command` in the `:commands` vector (the scaffolder
-prints the exact lines). Keep commands thin; put real logic in `core/`. See
+Then fill in the logic. The scaffolder also registers the command in
+`src/app.phel`. Keep commands thin; put real logic in `core/`. See
 [docs/architecture.md](docs/architecture.md).
 
 ## Exporting Phel to PHP
