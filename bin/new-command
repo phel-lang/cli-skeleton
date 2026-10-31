@@ -9,6 +9,8 @@
 #
 set -eu
 
+cd "$(dirname "$0")/.."
+
 NAME="${1:-}"
 
 if [ -z "$NAME" ]; then
@@ -17,8 +19,8 @@ if [ -z "$NAME" ]; then
 fi
 
 # Enforce kebab-case so the generated namespaces are valid Phel.
-if ! printf '%s' "$NAME" | grep -Eq '^[a-z][a-z0-9-]*$'; then
-  echo "error: name must be kebab-case (^[a-z][a-z0-9-]*$), got: $NAME" >&2
+if ! printf '%s' "$NAME" | grep -Eq '^[a-z][a-z0-9]*(-[a-z0-9]+)*$'; then
+  echo "error: name must be kebab-case (lowercase words joined by single hyphens), got: $NAME" >&2
   exit 2
 fi
 
