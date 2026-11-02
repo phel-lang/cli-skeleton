@@ -10,3 +10,8 @@ var
 *.cache
 composer.lock
 .phel-repl-history
+.agnostic-ai/
+.claude/
+.agents/
+AGENTS.md
+CLAUDE.md
