@@ -1,41 +1,28 @@
 ---
-description: What belongs in core/ (pure) vs commands/ (IO boundary)
+description: "Use when editing src/ or tests/ to decide what belongs in core/ (pure) versus commands/ (IO boundary)."
 globs: src/**,tests/**,*.phel
 ---
 
-# IO Boundaries
+# IO boundaries
 
-Dependency direction: `commands/` requires `core/`. Never the reverse.
-Full rationale: [docs/architecture.md](../../docs/architecture.md).
+`commands/` requires `core/`, never the reverse. Rationale: [docs/architecture.md](../../docs/architecture.md).
 
-## `src/core/`
+## `src/core/`: pure logic
 
-**Pure logic.** Same input gives the same output, with no observable effect.
+- Takes and returns plain data (maps, vectors, structs); same input, same output.
+- Must not print, prompt, read the clock, call `rand`, mutate global atoms, `php/exit`, touch the filesystem or sleep.
+- May do math, build new data and throw on invalid input.
+- Test with deterministic unit tests in `tests/core/`, no CLI harness.
 
-- Accepts and returns plain data (maps, vectors, structs).
-- May NOT: print, prompt, read the clock, `rand`, mutate global atoms,
-  `php/exit`, hit the filesystem, sleep.
-- MAY: do math, build new data, throw on invalid input.
-- Test target: deterministic unit tests in `tests/core/`, with no CLI harness.
+## `src/commands/`: the only IO layer
 
-## `src/commands/`
+- Read args and options with `cli/arg`, `cli/opt`; prompt with `cli/ask`.
+- Print with `cli/success`, `cli/warning`, `cli/error`; return an exit code.
+- Keep handlers thin: parse input, call a `core/` function, emit the result.
+- Test with handler smoke tests in `tests/commands/` that drive the real dispatcher via `cli/argv` and `cli/buffered-output`.
 
-**The IO boundary.** The only layer that talks to the outside world.
+## Fix these
 
-- Read args/opts via `cli/arg`, `cli/opt`; prompt via `cli/ask`.
-- Print via `cli/success`, `cli/warning`, `cli/error`; return an exit code.
-- Keep handlers thin: parse input, call a `core/` fn, emit the result.
-- Test target: handler smoke tests in `tests/commands/` driving the real
-  dispatcher with `cli/argv` + `cli/buffered-output`.
-
-## Smell test
-
-- A `core/` fn that prints, prompts, reads `php/microtime`, or calls
-  `php/rand`: move the effect into the command and pass the value in.
-- A command doing real computation inline: extract it into `core/` and
-  unit-test it there.
-
-## Scaling
-
-When commands stop being thin, split the boundary into `core/`, `glue/`, and `io/`
-(pure logic, pure wiring, effects). Same one-way rule, finer grained.
+- A `core/` function that prints, prompts, or calls `php/microtime` or `php/rand`: move the effect into the command and pass the value in.
+- A command computing inline: extract to `core/` and unit-test it.
+- When commands stop being thin, split into `core/`, `glue/` (pure wiring) and `io/` (effects), with the same one-way rule.

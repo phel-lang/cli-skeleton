@@ -1,43 +1,18 @@
 ---
-description: Phel language conventions for source and test files
+description: "Use when writing Phel source or tests (naming, namespaces, docstrings, exports)."
 globs: src/**,tests/**,*.phel
 ---
 
-# Phel Conventions
+# Phel conventions
 
-Depth: [docs/conventions.md](../../docs/conventions.md).
+More: [docs/conventions.md](../../docs/conventions.md).
 
-## Naming
-
-- kebab-case for functions and variables: `build-greeting`, `run-adder`.
-- `defn-` / `def-` for private (not exported).
-- `?` suffix for predicates (`loud?`), `!` suffix for side-effecting fns.
-- Namespaces match the path with a **dot** separator:
-  `cli-skeleton.core.adder`, `cli-skeleton.commands.greet`. NEVER backslash.
-- Test ns: `cli-skeleton-tests.<layer>.<name>-test` (plural `tests`, `-test`
-  suffix on both file and ns).
-
-## Docstrings
-
-Public `defn` carries a docstring (shows up via `(doc foo)` in the REPL).
-Skip it on private `defn-` unless the behavior is subtle.
-
-## Semantics
-
-- `defstruct` for data types, not PHP classes.
-- Threading: `->` first-arg, `->>` last-arg.
-- `for` builds sequences, `doseq` does side effects.
-- CLI args via `(cli/argv *argv*)`, not raw `php/$argv`. `*argv*` is the
-  core global holding user args (excludes the program name).
-- `*build-mode*` guard around top-level side effects in `main.phel`. Without
-  it `composer build` would execute the app.
-
-## Exporting to PHP
-
-Mark a pure `core/` fn `{:export true}`, run `composer export` to regenerate
-`src/PhelGenerated/`. Only export pure functions.
-
-## Formatting & checks
-
-`vendor/bin/phel format` auto-formats; `composer check` runs the fast gate
-(format-check + lint + test). A pre-commit hook runs it automatically.
+- kebab-case names (`build-greeting`). `defn-` / `def-` for private. `?` suffix for predicates (`loud?`), `!` for side-effecting functions.
+- Namespaces match the path with a dot: `cli-skeleton.core.adder`, `cli-skeleton.commands.greet`. Never a backslash.
+- Test namespace: `cli-skeleton-tests.<layer>.<name>-test` (plural `tests`; `-test` on file and namespace).
+- Public `defn` has a docstring (shown by `(doc foo)`). Private `defn-` only when the behavior is subtle.
+- `defstruct` for data types, not PHP classes. `->` threads first, `->>` last. `for` builds sequences, `doseq` does side effects.
+- Read CLI args with `(cli/argv *argv*)`, not `php/$argv`. `*argv*` holds user args without the program name.
+- Guard top-level side effects in `main.phel` with `*build-mode*`, or `composer build` runs the app.
+- Export to PHP: mark a pure `core/` function `{:export true}` and run `composer export` to regenerate `src/PhelGenerated/`. Export pure functions only.
+- `vendor/bin/phel format` formats. `composer check` (format check, lint, tests) runs in the pre-commit hook.
