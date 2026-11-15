@@ -16,7 +16,7 @@ A starting point for a command-line app in [Phel](https://phel-lang.org/), a fun
 - PHP 8.5 or newer, and [Composer](https://getcomposer.org/).
 - Or Docker: the repo includes a `Dockerfile` and a compose file (see [Docker](#docker)).
 
-The skeleton requires phel-lang `^0.54`. Pin an exact version before you ship an app.
+The skeleton requires phel-lang `^1.0.0-rc3` to test the 1.0 release candidate. Pin a stable release before you ship an app.
 
 ## Quick start
 

@@ -33,7 +33,7 @@ IO, the clock, and randomness belong in `commands/` (see [architecture.md](archi
 
 - **Flags and composer.** Composer takes flags for itself. Write `composer dev -- greet alice --loud` so `--loud` reaches the app.
 - **Negative numbers.** The console parser reads `-1` as an option. Write `add -- -1 2`. The same applies to `php out/main.php`.
-- **Parsing integers.** `parse-long` clamps an out-of-range value to the largest integer. `parse-int` in `core/adder.phel` returns `nil` instead, so overflow stays visible.
+- **Parsing integers.** Use `parse-int` in `core/adder.phel` for command arguments. It returns `nil` for non-integer input and values outside the PHP integer range.
 - **`:coerce` on arguments.** It works on single values only. For an `:array` argument, convert in the command or validate in `core/`.
 - **Generated files.** `src/PhelGenerated/` is created by `composer export` and is git-ignored.
 
